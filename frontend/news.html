@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trending News — AgriVision AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="news.css">
+</head>
+<body>
+
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <!-- Shared Header / Navbar -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🌿</div>
+        <div>
+          <h1>AgriVision <span>AI</span></h1>
+          <p>Crop Disease Intelligence</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="news.html" class="nav-link active">🔥 Trending</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Hero -->
+    <section class="news-hero">
+      <div class="news-hero-text">
+        <span class="hero-tag">📡 Live Intelligence Feed</span>
+        <h2>Crop Disease <em>Trend Alerts</em></h2>
+        <p>AI-powered surveillance of emerging crop threats across the globe. Get precautions before diseases reach your farm.</p>
+      </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Crop</label>
+        <div class="chip-group" id="cropFilter">
+          <button class="chip active" data-crop="All">All Crops</button>
+          <button class="chip" data-crop="Tomato">🍅 Tomato</button>
+          <button class="chip" data-crop="Apple">🍎 Apple</button>
+          <button class="chip" data-crop="Grape">🍇 Grape</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Region</label>
+        <div class="location-wrap" style="max-width:300px">
+          <span class="loc-icon">🌍</span>
+          <input type="text" id="regionInput" class="location-input" placeholder="e.g. India, Karnataka, Asia…">
+        </div>
+      </div>
+
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchTrends()">
+        <span>🔍 Get Trend Report</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div class="loader-ring"></div>
+      <p>Scanning global crop disease intelligence…</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- Cards Grid -->
+    <div class="news-grid" id="newsGrid"></div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🌱</div>
+      <h3>Select a crop and region</h3>
+      <p>Hit "Get Trend Report" to load the latest emerging disease threats and precautions for your area.</p>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>AgriVision AI &copy; 2025 · Trending alerts powered by Groq LLaMA · Data for awareness only</p>
+  </footer>
+
+  <script src="news.js"></script>
+</body>
+</html>

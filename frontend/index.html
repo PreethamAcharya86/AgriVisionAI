@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriVision AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background decoration -->
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🌿</div>
+        <div>
+          <h1>AgriVision <span>AI</span></h1>
+          <p>Crop Disease Intelligence</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="news.html" class="nav-link">🔥 Trending</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-text">
+        <span class="hero-tag">🔬 Powered by EfficientNet + LLM</span>
+        <h2>Detect crop diseases<br><em>before they spread</em></h2>
+        <p>Upload a leaf photo and get instant AI-powered diagnosis with treatment recommendations.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span>94%</span><label>Accuracy</label></div>
+        <div class="stat"><span>38+</span><label>Diseases</label></div>
+        <div class="stat"><span>3</span><label>Crops</label></div>
+      </div>
+    </section>
+
+    <!-- Step 1: Choose Crop -->
+    <section class="section">
+      <div class="section-label"><span class="step-badge">01</span> Choose Your Crop</div>
+      <div class="crop-grid" id="cropGrid">
+        <div class="crop-card selected" data-crop="Tomato" onclick="selectCrop(this)">
+          <div class="crop-icon">🍅</div>
+          <div class="crop-name">Tomato</div>
+          <div class="crop-diseases">9 diseases tracked</div>
+          <div class="crop-check">✓</div>
+        </div>
+        <div class="crop-card" data-crop="Apple" onclick="selectCrop(this)">
+          <div class="crop-icon">🍎</div>
+          <div class="crop-name">Apple</div>
+          <div class="crop-diseases">6 diseases tracked</div>
+          <div class="crop-check">✓</div>
+        </div>
+        <div class="crop-card" data-crop="Grape" onclick="selectCrop(this)">
+          <div class="crop-icon">🍇</div>
+          <div class="crop-name">Grape</div>
+          <div class="crop-diseases">5 diseases tracked</div>
+          <div class="crop-check">✓</div>
+        </div>
+      </div>
+      <!-- Hidden select keeps existing JS compatibility -->
+      <select id="crop" style="display:none">
+        <option>Tomato</option>
+        <option>Apple</option>
+        <option>Grape</option>
+      </select>
+    </section>
+
+    <!-- Step 2: Location -->
+    <section class="section">
+      <div class="section-label"><span class="step-badge">02</span> Farm Location <span class="optional">(optional)</span></div>
+      <div class="location-wrap">
+        <span class="loc-icon">📍</span>
+        <input type="text" id="location" placeholder="e.g. Mangalore, Karnataka" class="location-input">
+      </div>
+    </section>
+
+    <!-- Step 3: Upload -->
+    <section class="section">
+      <div class="section-label"><span class="step-badge">03</span> Upload Leaf Image</div>
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImage(this)">
+        <div class="upload-idle" id="uploadIdle">
+          <div class="upload-icon">📷</div>
+          <p class="upload-title">Click or drag to upload</p>
+          <p class="upload-sub">Drone or mobile leaf photo · JPG, PNG up to 10MB</p>
+        </div>
+        <img id="preview" alt="Preview">
+      </div>
+    </section>
+
+    <!-- Analyze Button -->
+    <button id="analyzeBtn" class="analyze-btn" onclick="analyze()" disabled>
+      <span class="btn-icon">🔍</span>
+      <span>Analyze Crop</span>
+      <span class="btn-arrow">→</span>
+    </button>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div class="loader-ring"></div>
+      <p>Analyzing image, please wait…</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- Results -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-header-top">
+          <h3>Analysis Result</h3>
+          <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">
+            &#11015; Download Report
+          </button>
+        </div>
+        <div id="badges" class="badges"></div>
+      </div>
+
+      <div class="result-grid">
+
+        <!-- Top 3 Predictions -->
+        <div class="result-panel">
+          <h4 class="panel-title">Top 3 Predictions</h4>
+          <div id="top3" class="top3-list"></div>
+        </div>
+
+        <!-- Confidence Chart -->
+        <div class="result-panel">
+          <h4 class="panel-title">Confidence Chart</h4>
+          <div class="chart-wrap">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Severity Meter -->
+      <div class="severity-section">
+        <h4 class="panel-title">Disease Severity</h4>
+        <div class="severity-track">
+          <div class="severity-fill" id="severityFill"></div>
+          <div class="severity-labels">
+            <span>Low</span><span>Moderate</span><span>High</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendation -->
+      <div class="rec-section">
+        <h4 class="panel-title">🌱 AI Recommendation</h4>
+        <div class="rec-box" id="recommendation"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>AgriVision AI &copy; 2025 · Built for Indian farmers · Powered by EfficientNet + Claude LLM</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
