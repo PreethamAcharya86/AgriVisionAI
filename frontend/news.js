@@ -1,3 +1,8 @@
+// ─── API Base URL ───────────────────────────────────────────────
+const API_BASE = (window.ENV && window.ENV.BACKEND_URL)
+  ? window.ENV.BACKEND_URL.replace(/\/$/, '')
+  : 'http://localhost:5000';
+
 // ─── State ──────────────────────────────────────────────────────
 let selectedCrop = 'All';
 
@@ -36,11 +41,12 @@ async function fetchTrends() {
   btn.disabled = true;
 
   try {
-    const res  = await fetch('http://localhost:5000/trends', {
+    const res  = await fetch(`${API_BASE}/trends`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ crop, region })
     });
+
     const data = await res.json();
 
     if (data.error) {
@@ -51,7 +57,7 @@ async function fetchTrends() {
       renderCards(data.trends);
     }
   } catch (err) {
-    showError('⚠ Cannot reach server. Make sure Flask is running: python app.py');
+    showError(`⚠ Cannot reach server (${API_BASE}). Check your backend.`);
   }
 
   showLoader(false);
@@ -72,21 +78,25 @@ function renderCards(trends) {
 
     const spreadLevel = { Low: 1, Moderate: 2, High: 3 }[t.threat_level] || 1;
     const dotClass    = { 1: '', 2: 'warn', 3: 'danger' }[spreadLevel];
-    const dots        = Array.from({ length: 3 }, (_, d) =>
+
+    const dots = Array.from({ length: 3 }, (_, d) =>
       `<div class="spread-dot ${d < spreadLevel ? `active ${dotClass}` : ''}"></div>`
     ).join('');
 
     const card = document.createElement('div');
     card.className = 'news-card';
     card.style.animationDelay = `${i * 0.07}s`;
+
     card.innerHTML = `
       <div class="card-header">
         <span class="card-crop-badge">${cropEmoji(t.crop)} ${t.crop}</span>
         <span class="threat-level ${threatClass}">⚠ ${t.threat_level} Threat</span>
       </div>
+
       <div class="card-body">
         <div class="card-disease">${t.disease}</div>
         <div class="card-region">📍 ${t.affected_regions}</div>
+
         <div class="spread-row">
           <span>Spread risk</span>
           <div class="spread-dots">${dots}</div>
@@ -124,7 +134,6 @@ function renderCards(trends) {
 
     grid.appendChild(card);
 
-    // Auto-open overview on first card
     if (i === 0) toggleSection(`overview-${i}`);
   });
 }
@@ -138,7 +147,9 @@ function toggleSection(id) {
 // ─── Crop Emoji ─────────────────────────────────────────────────
 function cropEmoji(crop) {
   const map = {
-    Tomato: '🍅', Apple: '🍎', Grape: '🍇'
+    Tomato: '🍅',
+    Apple:  '🍎',
+    Grape:  '🍇'
   };
   return map[crop] || '🌱';
 }
