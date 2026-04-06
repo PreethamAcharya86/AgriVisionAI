@@ -1,0 +1,11 @@
+flask
+flask-cors
+requests
+python-dotenv
+gunicorn
+torch
+torchvision
+timm
+opencv-python-headless
+Pillow
+numpy
